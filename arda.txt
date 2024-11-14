@@ -1,0 +1,48 @@
+Add-Type -AssemblyName System.Drawing
+
+# Create a Bitmap object (500x500 pixels)
+$width = 500
+$height = 500
+$bitmap = New-Object System.Drawing.Bitmap $width, $height
+
+# Create a Graphics object from the Bitmap
+$graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+
+# Fill the background with a random color
+$random = New-Object System.Random
+$bgColor = [System.Drawing.Color]::FromArgb($random.Next(256), $random.Next(256), $random.Next(256))
+$graphics.Clear($bgColor)
+
+# Draw random shapes on the image
+for ($i = 0; $i -lt 10; $i++) {
+    $shapeColor = [System.Drawing.Color]::FromArgb($random.Next(256), $random.Next(256), $random.Next(256))
+    $pen = New-Object System.Drawing.Pen $shapeColor, 5
+    
+    # Randomly decide to draw a rectangle or ellipse
+    if ($random.Next(2) -eq 0) {
+        $x = $random.Next($width)
+        $y = $random.Next($height)
+        $w = $random.Next($width - $x)
+        $h = $random.Next($height - $y)
+        $graphics.DrawRectangle($pen, $x, $y, $w, $h)
+    } else {
+        $x = $random.Next($width)
+        $y = $random.Next($height)
+        $d = $random.Next([Math]::Min($width, $height) - $x)
+        $graphics.DrawEllipse($pen, $x, $y, $d, $d)
+    }
+}
+
+# Show the image in the default image viewer (without saving to file)
+$viewer = New-Object System.Diagnostics.ProcessStartInfo
+$viewer.FileName = "mspaint"
+$viewer.Arguments = "/view"  # To show the image without editing
+$bitmap.Save("temp_image.png", [System.Drawing.Imaging.ImageFormat]::Png)
+$viewer.Arguments = "temp_image.png"
+[System.Diagnostics.Process]::Start($viewer)
+
+# Cleanup
+$graphics.Dispose()
+$bitmap.Dispose()
+
+Write-Host "Image is being displayed in the default image viewer."
