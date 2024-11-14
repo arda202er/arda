@@ -19,7 +19,7 @@ $body = @{
 
 # HTTP istemcisi oluşturma
 $headers = @{
-    "Authorization" = "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("$accountSid:$authToken"))
+    "Authorization" = "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${accountSid}:${authToken}"))
 }
 
 # Mesajı gönderme
